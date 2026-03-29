@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vocab Cleaner Pro</title>
+  <style>
+    :root {
+      --bg1: #f8fafc;
+      --bg2: #e0e7ff;
+      --card: rgba(255, 255, 255, 0.78);
+      --line: rgba(148, 163, 184, 0.22);
+      --text: #0f172a;
+      --muted: #64748b;
+      --dark: #020617;
+      --accent: #4f46e5;
+      --ok: #059669;
+      --danger: #dc2626;
+      --shadow: 0 24px 70px rgba(15, 23, 42, 0.10);
+      --radius: 28px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--text);
+    }
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(99, 102, 241, 0.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(6, 182, 212, 0.14), transparent 24%),
+        linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 45%, var(--bg1) 100%);
+    }
+
+    .wrap {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 18px 14px 34px;
+    }
+
+    .hero, .card, .footer-card {
+      background: var(--card);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      border-radius: 32px;
+      padding: 22px;
+      margin-bottom: 18px;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .badge.dark {
+      background: var(--dark);
+      color: #fff;
+      border: 0;
+    }
+
+    .badge.light {
+      background: rgba(255, 255, 255, 0.82);
+      color: #334155;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 52px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+    }
+
+    .sub {
+      margin: 14px 0 0;
+      max-width: 820px;
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 15px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      background: rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      border-radius: 24px;
+      padding: 14px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.05);
+    }
+
+    .stat .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+    }
+
+    .stat .value {
+      font-size: 28px;
+      font-weight: 800;
+      margin-top: 8px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.02fr 0.98fr;
+      gap: 18px;
+    }
+
+    .card {
+      border-radius: 28px;
+      padding: 18px;
+    }
+
+    .card + .card {
+      margin-top: 18px;
+    }
+
+    .title {
+      font-size: 21px;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .desc {
+      color: var(--muted);
+      margin-top: 6px;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .tabs,
+    .button-row,
+    .split,
+    .result-head,
+    .row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .tabs,
+    .button-row {
+      margin-top: 14px;
+    }
+
+    button,
+    .btn,
+    label.upload {
+      transition: 0.2s ease;
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--text);
+      border-radius: 18px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    button:hover { transform: translateY(-1px); }
+
+    button.primary,
+    button.active {
+      background: var(--dark);
+      color: #fff;
+      border-color: transparent;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .upload {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      min-height: 220px;
+      border-radius: 26px;
+      border: 1.6px dashed rgba(148, 163, 184, 0.55);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.86));
+      padding: 20px;
+      cursor: pointer;
+      margin-top: 14px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    .upload:hover { border-color: rgba(71, 85, 105, 0.55); }
+
+    .upload .icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 22px;
+      display: grid;
+      place-items: center;
+      background: var(--dark);
+      color: #fff;
+      font-size: 26px;
+      box-shadow: 0 18px 34px rgba(15, 23, 42, 0.20);
+      margin-bottom: 16px;
+    }
+
+    .upload p { margin: 0; }
+    .upload .main { font-weight: 800; font-size: 18px; }
+    .upload .hint { color: var(--muted); font-size: 14px; margin-top: 8px; }
+
+    .panel {
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      padding: 14px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    }
+
+    .switch-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      border-radius: 24px;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(255, 255, 255, 0.58);
+    }
+
+    .switch-line .small {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .switch {
+      position: relative;
+      width: 56px;
+      height: 32px;
+      background: #cbd5e1;
+      border-radius: 999px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .switch::after {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #fff;
+      transition: 0.2s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    .switch.on { background: var(--dark); }
+    .switch.on::after { left: 28px; }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      background: #ecfdf5;
+      color: var(--ok);
+    }
+
+    .file-info,
+    .error-box,
+    .test-item,
+    .example,
+    .feature {
+      border-radius: 24px;
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.82);
+    }
+
+    .file-info {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .error-box {
+      background: #fef2f2;
+      color: #b91c1c;
+      border-color: #fecaca;
+    }
+
+    .examples,
+    .features,
+    .tests {
+      display: grid;
+      gap: 14px;
+    }
+
+    .features { grid-template-columns: repeat(2, 1fr); }
+
+    .feature-title { font-weight: 800; }
+    .feature-desc,
+    .meta,
+    .muted {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .example .mini {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #94a3b8;
+    }
+
+    .example .line {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
+      margin: 14px 0;
+    }
+
+    .result-head {
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .tab-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: rgba(241, 245, 249, 0.85);
+      padding: 6px;
+      border-radius: 18px;
+      margin-top: 12px;
+    }
+
+    .tab-buttons button {
+      margin: 0;
+      border: 0;
+      background: transparent;
+    }
+
+    .tab-buttons button.active {
+      background: #fff;
+      color: var(--text);
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.06);
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 410px;
+      resize: vertical;
+      padding: 16px;
+      border-radius: 22px;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--text);
+      font: inherit;
+      font-size: 14px;
+      line-height: 1.8;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: rgba(79, 70, 229, 0.45);
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.08);
+    }
+
+    .footer-card {
+      margin-top: 18px;
+      border-radius: 28px;
+      padding: 24px 18px;
+      text-align: center;
+    }
+
+    .footer-card h2 {
+      margin: 10px 0 0;
+      font-size: clamp(28px, 4vw, 52px);
+      letter-spacing: -0.02em;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      max-width: 820px;
+      margin: 18px auto 0;
+    }
+
+    .footer-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 22px;
+      padding: 16px;
+      text-align: left;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.04);
+    }
+
+    .footer-item .k {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #94a3b8;
+    }
+
+    .footer-item .v {
+      margin-top: 8px;
+      font-size: 18px;
+      font-weight: 800;
+      word-break: break-word;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 980px) {
+      .grid { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .features { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .wrap { padding: 14px 10px 28px; }
+      .hero, .card, .footer-card { border-radius: 24px; }
+      .stat { border-radius: 18px; }
+      .tabs, .button-row { display: grid; grid-template-columns: 1fr; }
+      .tabs button, .button-row button { width: 100%; }
+      textarea { min-height: 320px; border-radius: 18px; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .file-info { flex-direction: column; align-items: flex-start; }
+      .switch-line { align-items: flex-start; }
+      .split { display: grid !important; grid-template-columns: 1fr !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="badge-row">
+        <span class="badge dark">Vocab Cleaner Pro</span>
+        <span class="badge light">1 file HTML • Bỏ vào VS Code là dùng</span>
+      </div>
+      <h1>Biến file từ vựng Anh - Việt thành bản chỉ còn tiếng Anh</h1>
+      <p class="sub">
+        Tải <b>.docx</b> hoặc <b>.pdf</b>, hoặc dán văn bản trực tiếp. Web sẽ cố gắng bỏ phần nghĩa tiếng Việt,
+        sau đó định dạng lại để <b>mỗi từ có dấu hai chấm</b> và <b>cách nhau một dòng</b> cho dễ học.
+      </p>
+      <div class="stats">
+        <div class="stat"><div class="label">Dòng gốc</div><div class="value" id="statRawLines">0</div></div>
+        <div class="stat"><div class="label">Dòng sạch</div><div class="value" id="statCleanLines">0</div></div>
+        <div class="stat"><div class="label">Ký tự còn lại</div><div class="value" id="statChars">0</div></div>
+        <div class="stat"><div class="label">Rút gọn</div><div class="value" id="statSaved">0%</div></div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div>
+        <div class="card">
+          <h2 class="title">Nguồn dữ liệu</h2>
+          <div class="desc">Chọn tải file hoặc dán văn bản trực tiếp để lọc nhanh.</div>
+
+          <div class="tabs">
+            <button id="modeFileBtn" class="active">Dùng file</button>
+            <button id="modePasteBtn">Dán văn bản</button>
+          </div>
+
+          <div id="fileMode">
+            <label class="upload" for="fileInput">
+              <div class="icon">↑</div>
+              <p class="main">Bấm để chọn file hoặc kéo thả vào đây</p>
+              <p class="hint">Hỗ trợ .docx và .pdf có text • Giới hạn 100MB</p>
+            </label>
+            <input id="fileInput" type="file" accept=".docx,.pdf" class="hidden" />
+          </div>
+
+          <div id="pasteMode" class="hidden panel" style="margin-top:14px;">
+            <textarea id="manualInput" style="min-height:220px;">abandon: từ bỏ
+accomplish /əˈkʌmplɪʃ/ (v): hoàn thành
+critical – quan trọng</textarea>
+          </div>
+
+          <div class="split" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;">
+            <div class="switch-line">
+              <div>
+                <div><b>Chế độ lọc mạnh hơn</b></div>
+                <div class="small">Hợp với file có nghĩa Việt dính liền sau từ.</div>
+              </div>
+              <div id="aggressiveSwitch" class="switch"></div>
+            </div>
+            <div class="switch-line">
+              <div>
+                <div><b>Trạng thái</b></div>
+                <div class="small" id="statusText">Sẵn sàng</div>
+              </div>
+              <span class="status">Ổn định</span>
+            </div>
+          </div>
+
+          <div class="button-row">
+            <button id="resetBtn">Xóa dữ liệu</button>
+            <button id="recleanBtn">Lọc lại ngay</button>
+          </div>
+
+          <div id="fileInfo" class="file-info hidden" style="margin-top:14px;">
+            <div>
+              <div><b id="fileName">-</b></div>
+              <div class="meta">Nguồn đang dùng: file tải lên</div>
+            </div>
+            <div class="badge light" id="fileState">Sẵn sàng</div>
+          </div>
+
+          <div id="errorBox" class="error-box hidden" style="margin-top:14px;"></div>
+        </div>
+
+        <div class="card">
+          <h2 class="title">Điểm mạnh</h2>
+          <div class="desc">Bản HTML gọn, dễ chạy trong VS Code bằng Live Server hoặc mở trực tiếp trong trình duyệt.</div>
+          <div class="features" style="margin-top:14px;">
+            <div class="feature"><div class="feature-title">Không cần build</div><div class="feature-desc">Không cần React, không cần npm, không cần cấu hình project phức tạp.</div></div>
+            <div class="feature"><div class="feature-title">Format dễ học</div><div class="feature-desc">Mỗi từ có dấu hai chấm ở cuối và giữa hai từ có một dòng trống.</div></div>
+            <div class="feature"><div class="feature-title">Dùng nhanh</div><div class="feature-desc">Có thể tải file hoặc dán văn bản trực tiếp để xử lý ngay.</div></div>
+            <div class="feature"><div class="feature-title">Responsive</div><div class="feature-desc">Chạy mượt trên điện thoại và máy tính, giao diện gọn và ổn định.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <div class="result-head">
+            <div>
+              <h2 class="title">Kết quả</h2>
+              <div class="desc">Xem trước nội dung sau khi bỏ nghĩa tiếng Việt.</div>
+            </div>
+            <span class="badge dark">Live Preview</span>
+          </div>
+
+          <div class="button-row">
+            <button id="downloadTxtBtn" class="primary">Tải .txt</button>
+            <button id="copyBtn">Copy kết quả</button>
+          </div>
+
+          <div class="tab-buttons">
+            <button id="tabCleanBtn" class="active">Bản sạch</button>
+            <button id="tabRawBtn">Nguồn đầu vào</button>
+          </div>
+
+          <div style="margin-top:12px;">
+            <textarea id="cleanedText"></textarea>
+            <textarea id="rawText" class="hidden" readonly></textarea>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="title">Kiểm tra logic lọc</h2>
+          <div class="desc"><span id="testPassCount">0</span>/<span id="testTotalCount">0</span> test đang pass.</div>
+          <div id="tests" class="tests" style="margin-top:14px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer-card">
+      <div class="badge light">Website được làm bởi</div>
+      <h2>Huỳnh Thiên Bảo</h2>
+      <div class="footer-grid">
+        <div class="footer-item">
+          <div class="k">Số điện thoại</div>
+          <div class="v">0931641284</div>
+        </div>
+        <div class="footer-item">
+          <div class="k">Email liên hệ</div>
+          <div class="v">huynhthienbao2008nt@gmail.com</div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://unpkg.com/mammoth@1.8.0/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+  <script>
+    const pdfjsLib = window["pdfjs-dist/build/pdf"];
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js";
+
+    const MAX_FILE_SIZE_MB = 100;
+    const MAX_FILE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
+
+    const VI_ACCENT_REGEX = /[ăâđêôơưáàảãạắằẳẵặấầẩẫậéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵ]/i;
+    const VI_WORD_START_REGEX = /\s+\S*[ăâđêôơưáàảãạắằẳẵặấầẩẫậéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵ]\S*/i;
+    const POS_MARKER_REGEX = /\b(n|v|adj|adv|prep|phr|idiom|vt|vi|noun|verb|adjective|adverb)\b\.?/i;
+    const IPA_REGEX = /\/.+?\//;
+    const VI_HINT_PATTERNS = [
+      /\bnghĩa\b/i, /\bdịch\b/i, /\btừ bỏ\b/i, /\bhoàn thành\b/i, /\bbắt đầu\b/i,
+      /\bkết thúc\b/i, /\bquan trọng\b/i, /\bmang tính\b/i, /\bruồng bỏ\b/i,
+      /\bchăm sóc\b/i, /\bđịnh nghĩa\b/i, /\bgiải thích\b/i, /\btiếp tục\b/i,
+      /\bcẩn thận\b/i, /\btò mò\b/i, /\btăng tốc\b/i, /\btừ chối\b/i
+    ];
+
+    const TEST_CASES = [
+      { input: "abandon: từ bỏ, ruồng bỏ", aggressive: false, expected: "abandon:" },
+      { input: "accomplish /əˈkʌmplɪʃ/ (v): hoàn thành", aggressive: false, expected: "accomplish /əˈkʌmplɪʃ/ (v):" },
+      { input: "critical – quan trọng, mang tính quyết định", aggressive: false, expected: "critical:" },
+      { input: "take care of (chăm sóc)", aggressive: false, expected: "take care of:" },
+      { input: "1. curious tò mò", aggressive: true, expected: "curious:" },
+      { input: "beautiful", aggressive: false, expected: "beautiful:" },
+      { input: "go on = tiếp tục", aggressive: false, expected: "go on:" },
+      { input: "careful [cẩn thận]", aggressive: false, expected: "careful:" },
+      { input: "look after : chăm sóc", aggressive: false, expected: "look after:" },
+      { input: "speed up | tăng tốc", aggressive: false, expected: "speed up:" },
+      { input: "turn down - từ chối", aggressive: false, expected: "turn down:" }
+    ];
+
+    const els = {
+      modeFileBtn: document.getElementById("modeFileBtn"),
+      modePasteBtn: document.getElementById("modePasteBtn"),
+      fileMode: document.getElementById("fileMode"),
+      pasteMode: document.getElementById("pasteMode"),
+      fileInput: document.getElementById("fileInput"),
+      manualInput: document.getElementById("manualInput"),
+      aggressiveSwitch: document.getElementById("aggressiveSwitch"),
+      statusText: document.getElementById("statusText"),
+      resetBtn: document.getElementById("resetBtn"),
+      recleanBtn: document.getElementById("recleanBtn"),
+      fileInfo: document.getElementById("fileInfo"),
+      fileName: document.getElementById("fileName"),
+      fileState: document.getElementById("fileState"),
+      errorBox: document.getElementById("errorBox"),
+      downloadTxtBtn: document.getElementById("downloadTxtBtn"),
+      copyBtn: document.getElementById("copyBtn"),
+      tabCleanBtn: document.getElementById("tabCleanBtn"),
+      tabRawBtn: document.getElementById("tabRawBtn"),
+      cleanedText: document.getElementById("cleanedText"),
+      rawText: document.getElementById("rawText"),
+      statRawLines: document.getElementById("statRawLines"),
+      statCleanLines: document.getElementById("statCleanLines"),
+      statChars: document.getElementById("statChars"),
+      statSaved: document.getElementById("statSaved"),
+      tests: document.getElementById("tests"),
+      testPassCount: document.getElementById("testPassCount"),
+      testTotalCount: document.getElementById("testTotalCount")
+    };
+
+    const state = {
+      inputMode: "file",
+      aggressive: false,
+      sourceText: "",
+      cleanedText: "",
+      fileName: ""
+    };
+
+    function setStatus(text) {
+      els.statusText.textContent = text;
+    }
+
+    function showError(message) {
+      els.errorBox.textContent = message || "";
+      els.errorBox.classList.toggle("hidden", !message);
+    }
+
+    function normalizeLineSpaces(text) {
+      return String(text || "")
+        .replace(/\u00A0/g, " ")
+        .replace(/[ \t]+/g, " ")
+        .replace(/\s+([,.;:!?])/g, "$1")
+        .trim();
+    }
+
+    function normalizeTextStructure(text) {
+      const lines = String(text || "")
+        .replace(/\r\n/g, "\n")
+        .replace(/\r/g, "\n")
+        .split("\n")
+        .map((line) => normalizeLineSpaces(line));
+
+      const output = [];
+      let previousBlank = false;
+
+      for (const line of lines) {
+        if (line) {
+          output.push(line);
+          previousBlank = false;
+        } else if (!previousBlank) {
+          output.push("");
+          previousBlank = true;
+        }
+      }
+
+      while (output.length && output[0] === "") output.shift();
+      while (output.length && output[output.length - 1] === "") output.pop();
+      return output.join("\n");
+    }
+
+    function hasVietnameseSignal(text) {
+      if (!text) return false;
+      if (VI_ACCENT_REGEX.test(text)) return true;
+      return VI_HINT_PATTERNS.some((pattern) => pattern.test(text));
+    }
+
+    function looksMostlyEnglish(text) {
+      if (!text) return false;
+      const letters = (text.match(/[A-Za-z]/g) || []).length;
+      const viLetters = (text.match(/[ăâđêôơưáàảãạắằẳẵặấầẩẫậéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵ]/gi) || []).length;
+      return letters > 0 && letters >= Math.max(1, viLetters * 2);
+    }
+
+    function stripVietnameseParentheses(text) {
+      let output = text;
+
+      output = output.replace(/\(([^()]*)\)/g, function(full, inner) {
+        if (hasVietnameseSignal(inner) && !IPA_REGEX.test(inner) && !POS_MARKER_REGEX.test(inner.trim())) {
+          return "";
+        }
+        return full;
+      });
+
+      output = output.replace(/\[([^\[\]]*)\]/g, function(full, inner) {
+        if (hasVietnameseSignal(inner)) {
+          return "";
+        }
+        return full;
+      });
+
+      return normalizeLineSpaces(output);
+    }
+
+    function removeTrailingTranslation(text, aggressive) {
+      const separators = ["\t", " → ", " => ", " = ", " – ", " — ", " - ", ": ", " ; ", " | "];
+
+      for (const separator of separators) {
+        if (!text.includes(separator)) continue;
+        const parts = text.split(separator);
+        if (parts.length < 2) continue;
+
+        const left = normalizeLineSpaces(parts[0]);
+        const right = normalizeLineSpaces(parts.slice(1).join(separator));
+
+        if (hasVietnameseSignal(right) && looksMostlyEnglish(left)) {
+          return left;
+        }
+      }
+
+      const genericSplit = text.match(/^(.{1,180}?)\s*[:：-]\s*(.+)$/);
+      if (genericSplit) {
+        const left = normalizeLineSpaces(genericSplit[1]);
+        const right = normalizeLineSpaces(genericSplit[2]);
+        if (hasVietnameseSignal(right) && looksMostlyEnglish(left)) {
+          return left;
+        }
+      }
+
+      const viStartMatch = text.match(VI_WORD_START_REGEX);
+      if (viStartMatch && typeof viStartMatch.index === "number" && viStartMatch.index > 0) {
+        const left = normalizeLineSpaces(text.slice(0, viStartMatch.index).replace(/[,:;\-–—|]+$/, ""));
+        const right = normalizeLineSpaces(text.slice(viStartMatch.index));
+        if (looksMostlyEnglish(left) && (aggressive || hasVietnameseSignal(right))) {
+          return left;
+        }
+      }
+
+      return normalizeLineSpaces(text);
+    }
+
+    function stripTranslationLine(line, aggressive) {
+      if (!line.trim()) return "";
+
+      let working = stripVietnameseParentheses(line)
+        .replace(/[•▪◦◆◇▶►★☆✓✔]/g, "")
+        .replace(/^\d+[\.)]\s*/, "")
+        .trim();
+
+      working = removeTrailingTranslation(working, aggressive);
+
+      if (aggressive && hasVietnameseSignal(working) && !looksMostlyEnglish(working)) {
+        return "";
+      }
+
+      return normalizeLineSpaces(working);
+    }
+
+    function formatForStudy(text) {
+      const items = normalizeTextStructure(text)
+        .split("\n")
+        .map((line) => normalizeLineSpaces(line).replace(/:+$/, "").trim())
+        .filter(Boolean)
+        .map((line) => line + ":");
+      return items.join("\n\n");
+    }
+
+    function cleanVocabularyText(text, aggressive) {
+      const lines = normalizeTextStructure(text).split("\n");
+      const cleaned = [];
+
+      for (const line of lines) {
+        const value = stripTranslationLine(line, aggressive);
+        if (!value) {
+          if (cleaned[cleaned.length - 1] !== "") cleaned.push("");
+          continue;
+        }
+        if (cleaned[cleaned.length - 1] !== value) {
+          cleaned.push(value);
+        }
+      }
+
+      return formatForStudy(cleaned.join("\n"));
+    }
+
+    function buildPageLines(items) {
+      const prepared = items
+        .map(function(item) {
+          return {
+            text: item && item.str ? item.str : "",
+            x: item && item.transform ? item.transform[4] || 0 : 0,
+            y: item && item.transform ? item.transform[5] || 0 : 0,
+            width: item && item.width ? item.width : 0
+          };
+        })
+        .filter(function(item) { return item.text.trim(); });
+
+      prepared.sort(function(a, b) {
+        if (Math.abs(b.y - a.y) > 2.5) return b.y - a.y;
+        return a.x - b.x;
+      });
+
+      const lines = [];
+      for (const item of prepared) {
+        const lastLine = lines[lines.length - 1];
+        if (!lastLine || Math.abs(lastLine.y - item.y) > 2.5) {
+          lines.push({ y: item.y, items: [item] });
+        } else {
+          lastLine.items.push(item);
+        }
+      }
+
+      return lines.map(function(line) {
+        line.items.sort(function(a, b) { return a.x - b.x; });
+        let text = "";
+        let previous = null;
+
+        for (const item of line.items) {
+          const value = item.text.trim();
+          if (!value) continue;
+
+          if (!previous) {
+            text += value;
+            previous = item;
+            continue;
+          }
+
+          const previousEndX = previous.x + previous.width;
+          const gap = item.x - previousEndX;
+          const needsSpace = gap > 1.5 && !/^[,.;:!?)]/.test(value) && !/[(/-]$/.test(text);
+          text += needsSpace ? (" " + value) : value;
+          previous = item;
+        }
+
+        return normalizeLineSpaces(text);
+      });
+    }
+
+    async function extractTextFromPdf(file) {
+      const arrayBuffer = await file.arrayBuffer();
+      const loadingTask = pdfjsLib.getDocument({
+        data: arrayBuffer,
+        useWorkerFetch: true,
+        isEvalSupported: false,
+        disableFontFace: true
+      });
+      const pdf = await loadingTask.promise;
+      const pages = [];
+
+      for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
+        const page = await pdf.getPage(pageNumber);
+        const content = await page.getTextContent();
+        const lines = buildPageLines(content.items || []);
+        pages.push(lines.join("\n"));
+      }
+
+      return normalizeTextStructure(pages.join("\n\n"));
+    }
+
+    async function extractTextFromDocx(file) {
+      const arrayBuffer = await file.arrayBuffer();
+      const result = await window.mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+      return normalizeTextStructure(result.value || "");
+    }
+
+    function validateFile(file) {
+      if (!file) return "Không có file nào được chọn.";
+      const lower = file.name.toLowerCase();
+      if (!lower.endsWith(".docx") && !lower.endsWith(".pdf")) {
+        return "Web này hiện hỗ trợ file .docx và .pdf.";
+      }
+      if (file.size > MAX_FILE_BYTES) {
+        return "File vượt quá " + MAX_FILE_SIZE_MB + "MB.";
+      }
+      return "";
+    }
+
+    function updateStats(source, cleaned) {
+      const rawLines = source ? source.split(/\r?\n/).filter(function(x) { return x.trim(); }).length : 0;
+      const cleanedLines = cleaned ? cleaned.split(/\r?\n/).filter(function(x) { return x.trim(); }).length : 0;
+      const rawChars = source.length;
+      const cleanedChars = cleaned.length;
+      const saved = rawChars > 0 ? Math.max(0, Math.round(((rawChars - cleanedChars) / rawChars) * 100)) : 0;
+
+      els.statRawLines.textContent = rawLines;
+      els.statCleanLines.textContent = cleanedLines;
+      els.statChars.textContent = cleanedChars;
+      els.statSaved.textContent = saved + "%";
+    }
+
+    function getActiveSource() {
+      return state.inputMode === "paste" ? els.manualInput.value : state.sourceText;
+    }
+
+    function renderOutput() {
+      const source = getActiveSource();
+      state.cleanedText = cleanVocabularyText(source, state.aggressive);
+      els.cleanedText.value = state.cleanedText;
+      els.rawText.value = source;
+      updateStats(source, state.cleanedText);
+    }
+
+    function downloadBlob(filename, blob) {
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = filename;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function downloadTxt(content, originalName) {
+      const base = (originalName || "vocabulary").replace(/\.[^.]+$/, "");
+      const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+      downloadBlob(base + "_english_only.txt", blob);
+    }
+
+    function renderTests() {
+      els.tests.innerHTML = "";
+      let pass = 0;
+
+      TEST_CASES.forEach(function(test, index) {
+        const actual = cleanVocabularyText(test.input, test.aggressive);
+        const ok = actual === test.expected;
+        if (ok) pass += 1;
+
+        const div = document.createElement("div");
+        div.className = "test-item";
+        div.innerHTML =
+          '<div style="display:flex;justify-content:space-between;gap:12px;align-items:center;">' +
+            "<b>Test " + (index + 1) + "</b>" +
+            '<span class="badge ' + (ok ? "light" : "dark") + '" style="padding:7px 12px;font-size:12px;">' + (ok ? "PASS" : "FAIL") + "</span>" +
+          "</div>" +
+          '<div class="muted" style="margin-top:10px;">Input: ' + (test.input || "(rỗng)") + "</div>" +
+          '<div class="muted" style="margin-top:6px;">Expected: ' + (test.expected || "(rỗng)") + "</div>" +
+          (ok ? "" : '<div style="margin-top:6px;color:#dc2626;">Actual: ' + (actual || "(rỗng)") + "</div>");
+
+        els.tests.appendChild(div);
+      });
+
+      els.testPassCount.textContent = pass;
+      els.testTotalCount.textContent = TEST_CASES.length;
+    }
+
+    els.modeFileBtn.addEventListener("click", function() {
+      state.inputMode = "file";
+      els.modeFileBtn.classList.add("active");
+      els.modePasteBtn.classList.remove("active");
+      els.fileMode.classList.remove("hidden");
+      els.pasteMode.classList.add("hidden");
+      setStatus(state.sourceText ? "Đang dùng nội dung từ file" : "Sẵn sàng");
+      renderOutput();
+    });
+
+    els.modePasteBtn.addEventListener("click", function() {
+      state.inputMode = "paste";
+      els.modePasteBtn.classList.add("active");
+      els.modeFileBtn.classList.remove("active");
+      els.pasteMode.classList.remove("hidden");
+      els.fileMode.classList.add("hidden");
+      setStatus("Đang dùng văn bản dán tay");
+      renderOutput();
+    });
+
+    els.aggressiveSwitch.addEventListener("click", function() {
+      state.aggressive = !state.aggressive;
+      els.aggressiveSwitch.classList.toggle("on", state.aggressive);
+      renderOutput();
+    });
+
+    els.manualInput.addEventListener("input", function() {
+      if (state.inputMode === "paste") renderOutput();
+    });
+
+    els.resetBtn.addEventListener("click", function() {
+      state.sourceText = "";
+      state.cleanedText = "";
+      state.fileName = "";
+      els.fileInput.value = "";
+      els.fileInfo.classList.add("hidden");
+      showError("");
+      setStatus("Sẵn sàng");
+      renderOutput();
+    });
+
+    els.recleanBtn.addEventListener("click", renderOutput);
+
+    els.fileInput.addEventListener("change", async function(e) {
+      const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
+      const message = validateFile(file);
+
+      if (message) {
+        showError(message);
+        setStatus("Có lỗi");
+        return;
+      }
+
+      showError("");
+      els.fileInfo.classList.remove("hidden");
+      els.fileName.textContent = file.name;
+      els.fileState.textContent = "Đang xử lý";
+      setStatus("Đang đọc file");
+
+      try {
+        const lower = file.name.toLowerCase();
+        state.sourceText = lower.endsWith(".docx")
+          ? await extractTextFromDocx(file)
+          : await extractTextFromPdf(file);
+
+        state.fileName = file.name;
+        els.fileState.textContent = "Sẵn sàng";
+        setStatus("Đã xử lý xong");
+        renderOutput();
+      } catch (err) {
+        console.error(err);
+        setStatus("Có lỗi");
+        showError("Không đọc được file. Nếu là PDF scan ảnh, web này sẽ không trích chữ tốt.");
+        els.fileState.textContent = "Lỗi";
+      }
+    });
+
+    els.downloadTxtBtn.addEventListener("click", function() {
+      downloadTxt(els.cleanedText.value || "", state.fileName || "vocabulary");
+    });
+
+    els.copyBtn.addEventListener("click", async function() {
+      try {
+        await navigator.clipboard.writeText(els.cleanedText.value || "");
+        setStatus("Đã copy kết quả");
+      } catch (err) {
+        console.error(err);
+        showError("Không copy tự động được trên trình duyệt này. Hãy copy thủ công.");
+      }
+    });
+
+    els.tabCleanBtn.addEventListener("click", function() {
+      els.tabCleanBtn.classList.add("active");
+      els.tabRawBtn.classList.remove("active");
+      els.cleanedText.classList.remove("hidden");
+      els.rawText.classList.add("hidden");
+    });
+
+    els.tabRawBtn.addEventListener("click", function() {
+      els.tabRawBtn.classList.add("active");
+      els.tabCleanBtn.classList.remove("active");
+      els.rawText.classList.remove("hidden");
+      els.cleanedText.classList.add("hidden");
+    });
+
+    renderTests();
+    renderOutput();
+  </script>
+</body>
+</html>
